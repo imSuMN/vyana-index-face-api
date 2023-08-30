@@ -84,5 +84,3 @@ const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server Started on PORT :${PORT}`);
 });
-
-module.exports = app;
