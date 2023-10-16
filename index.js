@@ -15,7 +15,7 @@ const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const app = express();
 app.use(express.json({ limit: "30mb" }));
 app.use(
-  express.urlencoded({ parameterLimit: 100000, limit: "50mb", extended: true })
+  express.urlencoded({  extended: false })
 );
 
 // app.use(function (req, res, next) {
