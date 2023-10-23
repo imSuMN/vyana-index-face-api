@@ -57,7 +57,7 @@ app.post("/indexFaces/:eventId", upload.array("images"), async (req, res) => {
 
       const s3input = {
         Bucket: process.env.BucketName,
-        Key: `${req.params.eventId}` + imageId + ".jpg",
+        Key: `${req.params.eventId}/` + imageId + ".jpg",
         Body: image.buffer,
       };
 
