@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
   res.send("Api Running...");
 });
 
-app.post("/indexFaces", upload.array("images"), async (req, res) => {
+app.post("/indexFaces/:eventId", upload.array("images"), async (req, res) => {
   try {
     const uploadedImages = req.files;
 
@@ -57,7 +57,7 @@ app.post("/indexFaces", upload.array("images"), async (req, res) => {
 
       const s3input = {
         Bucket: process.env.BucketName,
-        Key: "faces/" + imageId + ".jpg",
+        Key: `${req.params.eventId}` + imageId + ".jpg",
         Body: image.buffer,
       };
 
