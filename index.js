@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const fs = require("fs");
+const sharp = require('sharp')
 const multer = require("multer");
 
 const { uuid } = require("./utils");
@@ -18,18 +18,8 @@ app.use(
   express.urlencoded({  extended: false })
 );
 
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-//   );
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "x-access-token, Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
+
+
 
 app.use(cors());
 
@@ -45,7 +35,9 @@ app.post("/indexFaces/:eventId", upload.array("images"), async (req, res) => {
     const uploadedImages = req.files;
 
     for (const image of uploadedImages) {
+
       const imageId = uuid();
+      const image_buffer = await sharp(image.buffer).composite([{input : 'watermark.png' , gravity : 'southeast' }]).toBuffer();
       // Add face rekognition collection
       const input = {
         CollectionId: process.env.CollectionID,
@@ -58,7 +50,7 @@ app.post("/indexFaces/:eventId", upload.array("images"), async (req, res) => {
       const s3input = {
         Bucket: process.env.BucketName,
         Key: `${req.params.eventId}/` + imageId + ".jpg",
-        Body: image.buffer,
+        Body: image_buffer,
       };
 
       const command = new IndexFacesCommand(input);
