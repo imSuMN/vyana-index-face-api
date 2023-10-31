@@ -33,7 +33,7 @@ app.get("/", (req, res) => {
 app.post("/indexFaces/:eventId", upload.array("images"), async (req, res) => {
   try {
     const uploadedImages = req.files;
-    const watermark_url = 'https://raw.githubusercontent.com/imSuMN/vyana-index-face-api/main/watermark.png?token=GHSAT0AAAAAACJIEPQIWR6WZLAOFZD5QWMSZKAVJOQ';
+    const watermark_url = 'https://github.com/imSuMN/vyana-index-face-api/blob/main/watermark.png?raw=true';
 
     for (const image of uploadedImages) {
 
