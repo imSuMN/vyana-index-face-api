@@ -33,12 +33,12 @@ app.get("/", (req, res) => {
 app.post("/indexFaces/:eventId", upload.array("images"), async (req, res) => {
   try {
     const uploadedImages = req.files;
-    const watermark_url = 'https://github.com/imSuMN/vyana-index-face-api/blob/main/watermark.png?raw=true';
+
 
     for (const image of uploadedImages) {
 
       const imageId = uuid();
-      const image_buffer = await sharp(image.buffer).composite([{input : watermark_url , gravity : 'southeast' }]).toBuffer();
+      const image_buffer = await sharp(image.buffer).composite([{input : './watermark.png', gravity : 'southeast' }]).toBuffer();
       // Add face rekognition collection
       const input = {
         CollectionId: process.env.CollectionID,
