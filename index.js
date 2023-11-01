@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const sharp = require('sharp')
+const sharp = require("sharp");
 const multer = require("multer");
 
 const { uuid } = require("./utils");
@@ -14,12 +14,7 @@ const { PutObjectCommand } = require("@aws-sdk/client-s3");
 
 const app = express();
 app.use(express.json({ limit: "30mb" }));
-app.use(
-  express.urlencoded({  extended: false })
-);
-
-
-
+app.use(express.urlencoded({ extended: false }));
 
 app.use(cors());
 
@@ -34,11 +29,42 @@ app.post("/indexFaces/:eventId", upload.array("images"), async (req, res) => {
   try {
     const uploadedImages = req.files;
 
-
     for (const image of uploadedImages) {
-
       const imageId = uuid();
-      const image_buffer = await sharp(image.buffer).composite([{input : './watermark.png', gravity : 'southeast' }]).toBuffer();
+      
+      const mainImage = await sharp(image.buffer).metadata();
+
+      
+      // const watermark_buffer = await sharp("./watermark.png").resize({
+      //   height : Math.round( mainImage.height/10),
+      //   width: Math.round( mainImage.width/5)
+      // }).toBuffer();
+
+      const watermark_buffer = await sharp("./watermark.png").resize({
+        height: Math.round(mainImage.height / 10),
+        width: Math.round(mainImage.width / 5),
+        fit: "contain",
+        background: { r: 255, g: 255, b: 255, alpha: 0 }
+      }).toBuffer();
+      // .extend({
+      //   top: Math.round((mainImage.height - (mainImage.width / 5 * 2)) / 2),
+      //   bottom: Math.round((mainImage.height - (mainImage.width / 5 * 2)) / 2),
+      //   left: Math.round((mainImage.width - (mainImage.width / 5)) / 2),
+      //   right: Math.round((mainImage.width - (mainImage.width / 5)) / 2),
+      //   background: { r: 255, g: 255, b: 255, alpha: 0 }
+      // })
+      
+      
+      const image_buffer = await sharp(image.buffer)
+        .composite([
+          {
+            input: watermark_buffer,
+            gravity: "southeast",
+            
+          },
+        ])
+        .toBuffer();
+
       // Add face rekognition collection
       const input = {
         CollectionId: process.env.CollectionID,
